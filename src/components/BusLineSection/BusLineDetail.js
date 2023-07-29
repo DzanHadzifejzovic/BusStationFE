@@ -39,7 +39,7 @@ const BusLineDetail = () => {
       }
   }
   const onEdit = (id) => {
-    navigate('edit')
+    navigate('/bus-lines/bus-line/edit/'+id)
   }
 
     useEffect(()=>{

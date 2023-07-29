@@ -22,6 +22,7 @@ import DriverSchedule from './components/DriverPanel';
 import ConductorSchedule from './components/ConductorPanel';
 import BusLineDetail from './components/BusLineSection/BusLineDetail';
 import BusLineForm from './components/BusLineSection/BusLineForm';
+import BusLineEdit from './components/BusLineSection/BusLineEdit';
 
 const ROLES = {
   'Admin': "Admin",
@@ -53,7 +54,7 @@ function App() {
             <Route path='/admin-panel/users' element={<AdminPanelUsers />}></Route>
             <Route path='/admin-panel/requests' element={<AdminPanelRequests />}></Route>
             <Route path='/buses/bus-form' element={<BusForm />}></Route>
-            <Route path='/bus-lines/bus-line/:busLineId/edit' element></Route>
+            <Route path='/bus-lines/bus-line/edit/:busLineId' element={<BusLineEdit />}></Route>
             <Route path='/bus-lines/busLine-form' element={<BusLineForm />}></Route>
           </Route>
 
@@ -69,7 +70,8 @@ function App() {
 
           {/* COUNTERWORKER */}
           <Route element={<RequireAuth allowedRoles={[ROLES.CounterWorker]} />}>
-          <Route path='/bus-lines/busLine-form' element={<BusLineForm />}></Route>
+            <Route path='/bus-lines/bus-line/edit/:busLineId' element={<BusLineEdit />}></Route>
+            <Route path='/bus-lines/busLine-form' element={<BusLineForm />}></Route>
           </Route>
 
           {/* ADMIN-CONDUCTOR-COUNTERWORKER-DRIVER */}

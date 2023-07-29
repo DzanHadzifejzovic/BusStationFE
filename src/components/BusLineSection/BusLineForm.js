@@ -1,17 +1,18 @@
 import React, { useEffect } from 'react'
 import { ErrorMsg, FormContainer, FormGroup, Input, Label, StyledButton } from '../BusesSection/BusForm.styles';
 import { useState } from 'react';
-import {  getBuses } from '../../services/BusService';
 import { CustomOption, CustomSelect } from './BusLineForm.styles';
-import { fetchConductors, fetchDrivers } from '../../services/UserService';
 import useAuth from '../../hooks/useAuth';
 import { useLocation, useNavigate } from 'react-router-dom';
 import useAxiosPrivate from '../../hooks/useAxiosPrivate';
 import { useRef } from 'react';
 
 const BusLineForm = () => {
-  const{auth,setAuth}=useAuth();
-
+  const{setAuth}=useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const axiosPrivate = useAxiosPrivate();
+  
   const[formData, setFormData] = useState({
     numberOfPlatform: 0,
     roadRoute: "",
@@ -24,18 +25,15 @@ const BusLineForm = () => {
     conductorId: "",
   });
 
-  const[busNames,setBusNames] =useState([]);
-  const[drivers,setDrivers] =useState([]);
-  const[conductors,setConductors] =useState([]);
+  const[editData,setEditData] =useState({buses:[],conductors:[],drivers:[]});
+  const [loading, setLoading] = useState(true);
 
   // State to handle form errors
   const [formErrors, setFormErrors] = useState({});
   const[errMsg, setErrMsg] = useState('');
   const errRef = useRef();  
 
-  const navigate = useNavigate();
-  const location = useLocation();
-  const axiosPrivate = useAxiosPrivate();
+  
 
   const addBusLine = async (inputObject) => {
     try {
@@ -82,14 +80,14 @@ const BusLineForm = () => {
     if (formData.conductorId.length<=0) {
       errors.conductorId = "Please select a conductor";
     }
-    const combinedDateTime = new Date(`${formData.departureDate}T${formData.departureTime}:00.167Z`);
-    const isoDateTime = combinedDateTime.toISOString();
-
+    
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
       return;
     }
-    
+    const combinedDateTime = new Date(`${formData.departureDate}T${formData.departureTime}:00.167Z`);
+    const isoDateTime = combinedDateTime.toISOString();
+
     const inputObject=
     {
       numberOfPlatform:formData.numberOfPlatform,
@@ -112,41 +110,31 @@ const BusLineForm = () => {
   };
 
   useEffect(()=>{
+    let isMounted = true;
+    const controller = new AbortController();
 
-    const getBusesNames= async()=>{
+    const getEditData= async()=>{
       try{
-        const response = await getBuses(auth.accessToken);
-        setBusNames(response);
+        const response = await axiosPrivate.get('BusLine/get-data-for-busLine-edit-page',{
+          signal: controller.signal
+        });
+        isMounted && setEditData(response.data);
+        setLoading(false);
       }catch(error){
         setAuth({});
         navigate('/login-page' ,{ state: { from: location }, replace: true });
       }
     }
-    const getDrivers= async()=>{
-      try{
-        const response = await fetchDrivers(auth.accessToken);
-        setDrivers(response);
-      }catch(error){
-        setAuth({});
-        navigate('/login-page' ,{ state: { from: location }, replace: true });
-      }
-    }
-    const getConductors= async()=>{
-      try{
-        const response = await fetchConductors(auth.accessToken);
-        setConductors(response);
-      }catch(error){
-        console.log(error);
-        setAuth({});
-        navigate('/login-page' ,{ state: { from: location }, replace: true });
-      }
-    }
+    getEditData();
 
-    getBusesNames();
-    getDrivers();
-    getConductors();
-   
+    return () =>{
+      if(!loading){
+        isMounted = false;
+        controller.abort();
+      }
+    }
   },[])
+
   return (
     <FormContainer onSubmit={handleSubmit}>
     <FormGroup>
@@ -216,7 +204,7 @@ const BusLineForm = () => {
       <CustomSelect name='busId' onChange={handleChange} value={formData.busId}>
         <CustomOption disabled defaultChecked value='0'> Select a bus... </CustomOption>
       {
-        busNames.map((bus,index)=>{
+        editData.buses.map((bus,index)=>{
           return (
           <CustomOption key={index} value={bus.id}>
             {bus.name}
@@ -233,7 +221,7 @@ const BusLineForm = () => {
       <CustomSelect name='driverId' onChange={handleChange} value={formData.driverId}>
         <CustomOption disabled defaultChecked value=''>Select a driver...</CustomOption>
       {
-        drivers.map((driver,index)=>{
+        editData.drivers.map((driver,index)=>{
           return (
           <CustomOption key={index} value={driver.id}>
             {driver.firstName} {driver.lastName}
@@ -250,7 +238,7 @@ const BusLineForm = () => {
       <CustomSelect name='conductorId' onChange={handleChange} value={formData.conductorId}>
         <CustomOption disabled defaultChecked value=''>Select a conductor...</CustomOption>
       {
-        conductors.map((conductor,index)=>{
+        editData.conductors.map((conductor,index)=>{
           return (
           <CustomOption key={index} value={conductor.id}>
             {conductor.firstName} {conductor.lastName}

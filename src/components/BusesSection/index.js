@@ -42,9 +42,7 @@ const BusesSection = () => {
       }catch (err) {
         console.log("error in index with status code: " + JSON.stringify(err) + 'ILI TI ' + err);
         setAuth({});
-
         setErrMsg('Something went wrong while fetching data.');
-        setLoading(false);
         navigate('/login-page' ,{ state: { from: location }, replace: true }); //{ state: { from: location }, replace: true }
       }
     };

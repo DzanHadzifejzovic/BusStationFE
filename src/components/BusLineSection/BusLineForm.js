@@ -1,13 +1,16 @@
 import React, { useEffect } from 'react'
 import { ErrorMsg, FormContainer, FormGroup, Input, Label, StyledButton } from '../BusesSection/BusForm.styles';
 import { useState } from 'react';
-import { getBusNames, getBuses } from '../../services/BusService';
+import {  getBuses } from '../../services/BusService';
 import { CustomOption, CustomSelect } from './BusLineForm.styles';
 import { fetchConductors, fetchDrivers } from '../../services/UserService';
 import useAuth from '../../hooks/useAuth';
+import { useLocation, useNavigate } from 'react-router-dom';
+import useAxiosPrivate from '../../hooks/useAxiosPrivate';
+import { useRef } from 'react';
 
 const BusLineForm = () => {
-  const{auth}=useAuth();
+  const{auth,setAuth}=useAuth();
 
   const[formData, setFormData] = useState({
     numberOfPlatform: 0,
@@ -27,9 +30,27 @@ const BusLineForm = () => {
 
   // State to handle form errors
   const [formErrors, setFormErrors] = useState({});
+  const[errMsg, setErrMsg] = useState('');
+  const errRef = useRef();  
+
+  const navigate = useNavigate();
+  const location = useLocation();
+  const axiosPrivate = useAxiosPrivate();
+
+  const addBusLine = async (inputObject) => {
+    try {
+      await axiosPrivate.post('BusLine',inputObject);
+      navigate(-1);
+    }catch (err) {
+      setErrMsg('Input data isn\'t valid');
+      setAuth({});
+      navigate('/login-page' ,{ state: { from: location }, replace: true });
+    }
+  };
+
 
   // Function to handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
    
     const errors = {};
@@ -43,39 +64,45 @@ const BusLineForm = () => {
     if (!formData.departureDate) {
       errors.departureDate = "Departure date is required";
     }
-
     if (!formData.departureTime) {
       errors.departureTime = "Departure time is required";
     }
-
     if (isNaN(formData.delay) || formData.delay <= 0) {
       errors.delay = "Delay must be a non-negative number";
     }
-
     if (isNaN(formData.cardPrice) || formData.cardPrice <= 0) {
       errors.cardPrice = "Card price must be a positive number";
     }
-
     if (!formData.busId) {
       errors.busId = "Please select a bus";
     }
-
     if (formData.driverId.length<=0) {
       errors.driverId = "Please select a driver";
     }
-
     if (formData.conductorId.length<=0) {
       errors.conductorId = "Please select a conductor";
     }
-
-    console.log("Form data 1:", formData);
+    const combinedDateTime = new Date(`${formData.departureDate}T${formData.departureTime}:00.167Z`);
+    const isoDateTime = combinedDateTime.toISOString();
 
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
       return;
     }
-    console.log("Form data 2:", formData);
+    
+    const inputObject=
+    {
+      numberOfPlatform:formData.numberOfPlatform,
+      roadRoute:formData.roadRoute,
+      departureTime:isoDateTime,
+      delay:formData.delay,
+      cardPrice:formData.cardPrice,
+      busId:formData.busId,
+      driverId:formData.driverId,
+      conductorId:formData.conductorId
+    };
 
+    await addBusLine(inputObject);
   };
 
   // Function to handle input changes
@@ -91,7 +118,8 @@ const BusLineForm = () => {
         const response = await getBuses(auth.accessToken);
         setBusNames(response);
       }catch(error){
-        console.log(error);
+        setAuth({});
+        navigate('/login-page' ,{ state: { from: location }, replace: true });
       }
     }
     const getDrivers= async()=>{
@@ -99,7 +127,8 @@ const BusLineForm = () => {
         const response = await fetchDrivers(auth.accessToken);
         setDrivers(response);
       }catch(error){
-        console.log(error);
+        setAuth({});
+        navigate('/login-page' ,{ state: { from: location }, replace: true });
       }
     }
     const getConductors= async()=>{
@@ -108,6 +137,8 @@ const BusLineForm = () => {
         setConductors(response);
       }catch(error){
         console.log(error);
+        setAuth({});
+        navigate('/login-page' ,{ state: { from: location }, replace: true });
       }
     }
 
@@ -183,7 +214,7 @@ const BusLineForm = () => {
     <FormGroup>
       <Label>Bus :</Label>
       <CustomSelect name='busId' onChange={handleChange} value={formData.busId}>
-        <CustomOption disabled>Select a bus...</CustomOption>
+        <CustomOption disabled defaultChecked value='0'> Select a bus... </CustomOption>
       {
         busNames.map((bus,index)=>{
           return (
@@ -200,7 +231,7 @@ const BusLineForm = () => {
     <FormGroup>
       <Label>Driver :</Label>
       <CustomSelect name='driverId' onChange={handleChange} value={formData.driverId}>
-        <CustomOption disabled>Select a driver...</CustomOption>
+        <CustomOption disabled defaultChecked value=''>Select a driver...</CustomOption>
       {
         drivers.map((driver,index)=>{
           return (
@@ -217,7 +248,7 @@ const BusLineForm = () => {
     <FormGroup>
       <Label>Conductor :</Label>
       <CustomSelect name='conductorId' onChange={handleChange} value={formData.conductorId}>
-        <CustomOption disabled>Select a conductor...</CustomOption>
+        <CustomOption disabled defaultChecked value=''>Select a conductor...</CustomOption>
       {
         conductors.map((conductor,index)=>{
           return (
@@ -232,6 +263,10 @@ const BusLineForm = () => {
     </FormGroup>
     
         <StyledButton type="submit">Submit</StyledButton>
+
+        <p ref={errRef} style={errMsg ? 
+              {backgroundColor:'lightpink',color:'firebrick',fontWeight:'bold',padding:'0.5rem',marginBottom:'0.5rem',textAlign:'center'} : 
+              {position:'absolute',left:'-9999px'}} aria-live="assertive">{errMsg}</p>
   </FormContainer>
   );
 }

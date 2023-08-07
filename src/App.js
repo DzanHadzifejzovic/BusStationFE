@@ -49,11 +49,16 @@ function App() {
           <Route path="unauthorized" element={<Unauthorized />} />
 
           {/* protected routes */}
+
           {/* ADMIN */}
           <Route element={<RequireAuth allowedRoles={[ROLES.Admin]} />}>
             <Route path='/admin-panel/users' element={<AdminPanelUsers />}></Route>
             <Route path='/admin-panel/requests' element={<AdminPanelRequests />}></Route>
-            <Route path='/buses/bus-form' element={<BusForm />}></Route>
+            <Route path='/buses/bus-form' element={<BusForm />}></Route>   
+          </Route>
+
+          {/* COUNTERWORKER - ADMIN */}
+          <Route element={<RequireAuth allowedRoles={[ROLES.CounterWorker,ROLES.Admin]} />}>
             <Route path='/bus-lines/bus-line/edit/:busLineId' element={<BusLineEdit />}></Route>
             <Route path='/bus-lines/busLine-form' element={<BusLineForm />}></Route>
           </Route>
@@ -68,11 +73,7 @@ function App() {
             <Route path='/conductor-panel/conductor-schedule' element={<ConductorSchedule /> }></Route>
           </Route>
 
-          {/* COUNTERWORKER */}
-          <Route element={<RequireAuth allowedRoles={[ROLES.CounterWorker]} />}>
-            <Route path='/bus-lines/bus-line/edit/:busLineId' element={<BusLineEdit />}></Route>
-            <Route path='/bus-lines/busLine-form' element={<BusLineForm />}></Route>
-          </Route>
+        
 
           {/* ADMIN-CONDUCTOR-COUNTERWORKER-DRIVER */}
           <Route element={<RequireAuth allowedRoles={[ROLES.Admin, ROLES.Conductor, ROLES.CounterWorker, ROLES.Driver]} />}>

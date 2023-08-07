@@ -18,6 +18,7 @@ const BusDetails = () => {
     const {busId} = useParams();
     const {auth} = useAuth();
     const isAdmin = auth.arrayRoles && auth.arrayRoles.includes('Admin');
+    const isCounterWorker = auth.arrayRoles && auth.arrayRoles.includes('CounterWorker');
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -138,19 +139,15 @@ const BusDetails = () => {
             <DetailValue>{bus.drivingCondition ? 'yes' : 'no'}</DetailValue>
           </DetailItem>
           {
-          isAdmin &&
+          (isAdmin || isCounterWorker) &&
+          <>
           <DetailItem>
             <StyledButton danger='danger' onClick={() => onDelete(bus.id)} >
                <TrashIcon icon={faTrash} />
                Delete
             </StyledButton>
           </DetailItem>
-          
-          }
-          {
-          auth.arrayRoles.length != 0 && (auth.arrayRoles.includes('Admin') || auth.arrayRoles.includes('Conductor') || auth.arrayRoles.includes('Driver') )
-          ?
-          <>
+        
           <DetailItem>
             <StyledButton onClick={() => onEdit(bus.id)}> {/*style={{visibility:'hidden'}}  ref={btnRef} */}
               <EditIcon icon={faEdit} />
@@ -182,8 +179,7 @@ const BusDetails = () => {
           </div>
 
           </>
-          :
-          ''
+         
           }
         </>
         }

@@ -71,16 +71,13 @@ function App() {
           {/* CONDUCTOR */}
           <Route element={<RequireAuth allowedRoles={[ROLES.Conductor]} />}>
             <Route path='/conductor-panel/conductor-schedule' element={<ConductorSchedule /> }></Route>
-          </Route>
-
-        
+          </Route>       
 
           {/* ADMIN-CONDUCTOR-COUNTERWORKER-DRIVER */}
           <Route element={<RequireAuth allowedRoles={[ROLES.Admin, ROLES.Conductor, ROLES.CounterWorker, ROLES.Driver]} />}>
             <Route path='/buses' element={<Buses />}></Route>
             <Route path='/buses/:busId' element={<BusDetails />}></Route>
           </Route>
-
 
           {/* catch all */}
           <Route path='*' element></Route> {/* add missing component */}
@@ -93,22 +90,6 @@ function App() {
   );
 }
 
-
-  {/*
-        <Navbar  />
-
-        <Routes>
-          <Route path='/' element={<Home />}></Route>
-          <Route path='/admin-panel' element={<AdminPanel />}></Route>
-          <Route exact path='/bus-lines' element={<BusLines />}></Route>
-          <Route path='/buses' element={<Buses />}></Route>
-          
-          <Route path='/login-page' element={<LoginPage/>}></Route>
-          <Route path='/register-page' element={<RegisterPage/>}></Route>
-        </Routes>
-
-        <Footer  />
-  */} 
 
 export default App;
 

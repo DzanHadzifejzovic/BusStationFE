@@ -1,16 +1,11 @@
 import React,{useState,useEffect} from 'react'
 import { animateScroll as scroll } from 'react-scroll';
-
 import { Link } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
 import { faTimes,faBars } from '@fortawesome/free-solid-svg-icons'
 import Button from '../Button';
 import { NavbarContainer, Wrapper } from './Navbar.styles';
 import useAuth from '../../hooks/useAuth';
-
-
-
 
 const Navbar = () => {
   const { auth,setAuth } = useAuth();
@@ -44,7 +39,6 @@ const Navbar = () => {
         closeMobileMenu();
     }
     setAuth({});
-    //localStorage.setItem('token','');
     console.log('Logout auth obj: ' + JSON.stringify(auth));
   }
 
@@ -81,6 +75,14 @@ const Navbar = () => {
                 <li className='nav-item'>
                   <p className='welcome-msg'>
                   Hello Conductor {auth.username}
+                  </p>
+                </li>
+              }
+              {
+                isCounterWorker &&
+                <li className='nav-item'>
+                  <p className='welcome-msg'>
+                  Hello CounterWorker {auth.username}
                   </p>
                 </li>
               }

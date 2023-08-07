@@ -17,6 +17,7 @@ const BusLineSection = () => {
   const { auth } =useAuth();
 
   const isAdmin = auth.arrayRoles && auth.arrayRoles.includes('Admin');
+  const isCounterWorker = auth.arrayRoles && auth.arrayRoles.includes('CounterWorker');
 
   const headersOfColumns = [
     {
@@ -188,7 +189,7 @@ const BusLineSection = () => {
       <SearchBar setSearchTerm={setSearch} ></SearchBar>
       <Sort sortsAvailable={availableaSorts}  sort={sort} setSort={(sort)=>setSort(sort)}></Sort>
       {
-          isAdmin && 
+          (isAdmin || isCounterWorker) && 
             <StyledButton onClick={addBusLine}>
               <FontAwesomeIcon icon={faPlus}  />
               Add
@@ -207,8 +208,6 @@ const BusLineSection = () => {
         <CustomTable section='busLines' data={busLines.busLines} 
           count={busLines.countAllBusLines} columns={headersOfColumns} 
           setPageNum={setPageNumber} 
-          /*editRow={(id) => editSelectedRow(id)} 
-          deleteRow={(id)=> deleteSelectedRow(id)}*/
         />
       </>
     }

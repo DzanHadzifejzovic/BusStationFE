@@ -18,10 +18,10 @@ const BusLineDetail = () => {
 
   const{auth} =useAuth();
   const isAdmin = auth.arrayRoles && auth.arrayRoles.includes('Admin');
+  const isCounterWorker = auth.arrayRoles && auth.arrayRoles.includes('CounterWorker');
 
   const navigate = useNavigate();
   const location = useLocation();
-  console.log(location);
 
   const goBack = () => navigate(-1);
   
@@ -38,7 +38,9 @@ const BusLineDetail = () => {
           },3500);
       }
   }
+
   const onEdit = (id) => {
+    console.log('bus line id:' + id);
     navigate('/bus-lines/bus-line/edit/'+id)
   }
 
@@ -144,7 +146,7 @@ const BusLineDetail = () => {
           }
 
           {
-          isAdmin &&
+          (isAdmin || isCounterWorker) &&
           <>
           <DetailItem>
             <StyledButton danger='danger' onClick={()=>onDelete(busLine.id)} >
@@ -154,7 +156,7 @@ const BusLineDetail = () => {
           </DetailItem>
 
           <DetailItem>
-            <StyledButton onClick={() => onEdit(busLine.id)}> {/*style={{visibility:'hidden'}}  ref={btnRef} */}
+            <StyledButton onClick={() => onEdit(busLine.id)}>
               <EditIcon icon={faEdit} />
               Edit this Bus Line
             </StyledButton>

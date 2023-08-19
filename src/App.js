@@ -1,28 +1,26 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-
 import './App.css';
-
-import Navbar from './components/Navbar';
-import Footer from './components/Footer';
-
-import Home from './pages/Home';
-import Buses from './pages/Buses';
-import BusLines from './pages/BusLines';
-import LoginPage from './pages/LoginPage';
-import RegisterPage from './pages/RegisterPage';
-import Layout from './pages/Layout';
-import RequireAuth from './components/Auth/RequireAuth';
-import Unauthorized from './components/Auth/Unauthorized';
-import BusDetails from './components/BusesSection/BusDetails';
 import AdminPanelUsers from './components/AdminPanel/AdminPanelUsers';
 import AdminPanelRequests from './components/AdminPanel/AdminPanelRequests';
-import BusForm from './components/BusesSection/BusForm';
-import DriverSchedule from './components/DriverPanel';
-import ConductorSchedule from './components/ConductorPanel';
 import BusLineDetail from './components/BusLineSection/BusLineDetail';
 import BusLineForm from './components/BusLineSection/BusLineForm';
 import BusLineEdit from './components/BusLineSection/BusLineEdit';
+import Buses from './pages/Buses';
+import BusDetails from './components/BusesSection/BusDetails';
+import BusForm from './components/BusesSection/BusForm';
+import BusLines from './pages/BusLines';
+import ConductorSchedule from './components/ConductorPanel';
+import DriverSchedule from './components/DriverPanel';
+import Footer from './components/Footer';
+import Home from './pages/Home';
+import Layout from './pages/Layout';
+import Navbar from './components/Navbar';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
+import RequireAuth from './components/Auth/RequireAuth';
+import Unauthorized from './components/Auth/Unauthorized';
+
 
 const ROLES = {
   'Admin': "Admin",

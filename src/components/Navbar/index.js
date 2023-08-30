@@ -119,13 +119,6 @@ const Navbar = () => {
                     <Link to='/conductor-panel/conductor-schedule' onClickCapture={scrollToTop} className='nav-links' onClick={closeMobileMenu}> My Schedule</Link>
                   </li>
                 }
-                {  
-                  isCounterWorker &&
-                  <li className='nav-item'>
-                    <Link to='/cards' onClickCapture={scrollToTop} className='nav-links' onClick={closeMobileMenu}>Cards</Link>
-                  </li>
-                }
-                
                 {
                 auth.username != null ?
                 

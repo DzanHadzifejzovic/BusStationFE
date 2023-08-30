@@ -11,7 +11,7 @@ const Home = () => {
   return (
     <>
     <StyledHomePage>
-      <Title>Dobrodošli na stranicu autobuski stanice</Title>
+      <Title>Dobrodošli na stranicu autobuske stanice</Title>
       <Animation src="bus-animated.png" alt="Image 2" />
       <Divider street />
     </StyledHomePage>

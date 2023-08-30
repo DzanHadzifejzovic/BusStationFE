@@ -33,7 +33,7 @@ const LoginForm = () => {
       setPassword('');
       navigate('/buses');
     }catch(err){
-      setErrMsg('Something get wrong');
+      setErrMsg('Wrong username or password');
       errRef.current.focus();
     }
   }
